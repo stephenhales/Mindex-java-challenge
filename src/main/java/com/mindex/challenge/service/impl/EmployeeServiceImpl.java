@@ -1,6 +1,7 @@
 package com.mindex.challenge.service.impl;
 
 import com.mindex.challenge.dao.EmployeeRepository;
+import com.mindex.challenge.data.Compensation;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.service.EmployeeService;
 import org.slf4j.Logger;
@@ -45,5 +46,29 @@ public class EmployeeServiceImpl implements EmployeeService {
         LOG.debug("Updating employee [{}]", employee);
 
         return employeeRepository.save(employee);
+    }
+
+    @Override
+    public Employee createCompensation(String id, Compensation compensation) {
+        LOG.debug("Creating employee compensation [{}]", compensation);
+
+        Employee employee = read(id);
+        employee.setCompensation(compensation);
+        update(employee);
+
+        return employee;
+    }
+
+    @Override
+    public Compensation readCompensation(String id) {
+        LOG.debug("Reading employee compensation [{}]", id);
+
+        Employee employee = employeeRepository.findByEmployeeId(id);
+
+        if (employee == null) {
+            throw new RuntimeException("Invalid employeeId: " + id);
+        }
+
+        return employee.getCompensation();
     }
 }
