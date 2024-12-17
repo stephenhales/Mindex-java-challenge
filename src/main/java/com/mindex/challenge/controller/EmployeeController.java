@@ -42,11 +42,11 @@ public class EmployeeController {
         return employeeService.update(employee);
     }
 
-    @PostMapping("/employee/{id}/compensation")
-    public Employee createCompensation(@PathVariable String id, @RequestBody Compensation compensation) {
-        LOG.debug("Received employee create compensation request for [{}]", compensation);
+    @PutMapping("/employee/{id}/compensation")
+    public Employee updateCompensation(@PathVariable String id, @RequestBody Compensation compensation) {
+        LOG.debug("Received employee update compensation request for [{}]", id);
 
-        return employeeService.createCompensation(id, compensation);
+        return employeeService.updateCompensation(id, compensation);
     }
 
     @GetMapping("/employee/{id}/compensation")

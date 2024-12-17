@@ -30,7 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee read(String id) {
-        LOG.debug("Creating employee with id [{}]", id);
+        LOG.debug("Getting employee with id [{}]", id);
 
         Employee employee = employeeRepository.findByEmployeeId(id);
 
@@ -49,8 +49,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee createCompensation(String id, Compensation compensation) {
-        LOG.debug("Creating employee compensation [{}]", compensation);
+    public Compensation readCompensation(String id) {
+        LOG.debug("Reading employee compensation [{}]", id);
+
+        Employee employee = read(id);
+
+        return employee.getCompensation();
+    }
+
+    @Override
+    public Employee updateCompensation(String id, Compensation compensation) {
+        LOG.debug("Updating employee with compensation [{}]", compensation);
 
         Employee employee = read(id);
         employee.setCompensation(compensation);
@@ -59,16 +68,5 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
-    @Override
-    public Compensation readCompensation(String id) {
-        LOG.debug("Reading employee compensation [{}]", id);
 
-        Employee employee = employeeRepository.findByEmployeeId(id);
-
-        if (employee == null) {
-            throw new RuntimeException("Invalid employeeId: " + id);
-        }
-
-        return employee.getCompensation();
-    }
 }

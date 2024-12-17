@@ -7,6 +7,6 @@ public interface EmployeeService {
     Employee create(Employee employee);
     Employee read(String id);
     Employee update(Employee employee);
-    Employee createCompensation(String id, Compensation compensation);
     Compensation readCompensation(String id);
+    Employee updateCompensation(String id, Compensation compensation);
 }

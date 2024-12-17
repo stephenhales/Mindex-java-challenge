@@ -1,5 +1,6 @@
 package com.mindex.challenge.service.impl;
 
+import com.mindex.challenge.data.Compensation;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.service.EmployeeService;
 import org.junit.Before;
@@ -24,6 +25,7 @@ public class EmployeeServiceImplTest {
 
     private String employeeUrl;
     private String employeeIdUrl;
+    private String compensationURL;
 
     @Autowired
     private EmployeeService employeeService;
@@ -38,6 +40,7 @@ public class EmployeeServiceImplTest {
     public void setup() {
         employeeUrl = "http://localhost:" + port + "/employee";
         employeeIdUrl = "http://localhost:" + port + "/employee/{id}";
+        compensationURL = "http://localhost:" + port + "/employee/{id}/compensation";
     }
 
     @Test
@@ -75,6 +78,30 @@ public class EmployeeServiceImplTest {
                         readEmployee.getEmployeeId()).getBody();
 
         assertEmployeeEquivalence(readEmployee, updatedEmployee);
+    }
+
+    @Test
+    public void persistCompensationSuccessfully(){
+        String id = "16a596ae-edd3-4847-99fe-c4518e82c86f"; // John Lennon
+        Compensation compensation = new Compensation(800000, "09-26-1969");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // Create Compensation for John Lennon
+        Employee result =
+                restTemplate.exchange(compensationURL,
+                        HttpMethod.PUT,
+                        new HttpEntity<>(compensation, headers),
+                        Employee.class,
+                        id).getBody();
+
+        assertNotNull(result);
+        assertEquals(800000, result.getCompensation().getSalary());
+
+        //Test that it persists
+        Compensation compensationResult = restTemplate.getForEntity(compensationURL, Compensation.class, id).getBody();
+        assertEquals(800000, compensationResult.getSalary());
+        assertEquals("09-26-1969", compensationResult.getEffectiveDate());
     }
 
     private static void assertEmployeeEquivalence(Employee expected, Employee actual) {
