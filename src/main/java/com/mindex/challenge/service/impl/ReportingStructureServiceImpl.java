@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,7 +24,7 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
 
     @Override
     public ReportingStructure read(String id) {
-        LOG.debug("Creating employee with id [{}]", id);
+        LOG.debug("Getting employee with id [{}]", id);
 
         Employee rootEmployee = employeeRepository.findByEmployeeId(id);
 
@@ -31,8 +32,17 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
             throw new RuntimeException("Invalid employeeId: " + id);
         }
 
-        //Add recursive calls to fill out the employee tree, and then count the total.
+        List<Employee> directReports = rootEmployee.getDirectReports();
+        if(directReports == null){
+            return new ReportingStructure(rootEmployee, 0);
+        }
 
-        return new ReportingStructure();
+        //Recursive call to get the total report count traversing down the chain of command
+        int directCount = directReports.size();
+        for( Employee e : directReports){
+            directCount += read(e.getEmployeeId()).getNumberOfReports();
+        }
+
+        return new ReportingStructure(rootEmployee, directCount);
     }
 }
